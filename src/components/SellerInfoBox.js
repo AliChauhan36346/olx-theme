@@ -4,7 +4,7 @@ import { Mail, Phone, MessageCircle } from 'lucide-react';
 export default function SellerInfoBox({ seller }) {
   return (
     <div className="bg-white rounded-2xl shadow-md p-6 mb-6">
-      <h3 className="text-lg font-semibold mb-4">Seller Information</h3>
+      <h3 className="text-lg font-semibold mb-4 text-gray-800">Seller Information</h3>
       <div className="mb-2 flex items-center">
         <span className="font-medium text-gray-800 mr-2">{seller.name}</span>
       </div>

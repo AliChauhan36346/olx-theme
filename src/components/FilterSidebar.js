@@ -3,7 +3,7 @@ import React from 'react';
 export default function FilterSidebar({ filters, onChange }) {
   return (
     <aside className="bg-white rounded-2xl shadow-md p-6 w-full md:w-64 mb-8 md:mb-0">
-      <h3 className="text-lg font-semibold mb-4">Filters</h3>
+      <h3 className="text-lg font-semibold mb-4 text-gray-800">Filters</h3>
       {/* Price Range */}
       <div className="mb-6">
         <label className="block text-gray-800 font-medium mb-2">Price Range</label>
@@ -20,7 +20,7 @@ export default function FilterSidebar({ filters, onChange }) {
       {/* Condition */}
       <div className="mb-6">
         <label className="block text-gray-800 font-medium mb-2">Condition</label>
-        <select className="w-full p-2 border rounded">
+        <select className="w-full p-2 border rounded placeholder-gray-400 text-gray-800">
           <option value="">Any</option>
           <option value="new">New</option>
           <option value="used">Used</option>
