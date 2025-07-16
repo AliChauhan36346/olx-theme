@@ -9,7 +9,7 @@ const Footer = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div>
-            <h3 className="text-xl font-bold mb-4">OLX</h3>
+            <h3 className="text-xl font-bold mb-4">QuickSell</h3>
             <p className="text-white mb-4">
               Your trusted marketplace for buying and selling everything.
             </p>
@@ -41,13 +41,13 @@ const Footer = () => {
               </div>
               <div className="flex items-center text-white">
                 <Mail className="w-4 h-4 mr-2" />
-                support@olx.com
+                support@quicksell.com
               </div>
             </div>
           </div>
         </div>
         <div className="border-t border-gray-700 mt-8 pt-8 text-center text-gray-200">
-          <p>&copy; 2024 OLX Clone. All rights reserved.</p>
+          <p>&copy; 2024 QuickSell. All rights reserved.</p>
         </div>
       </div>
     </footer>

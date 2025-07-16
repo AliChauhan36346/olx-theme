@@ -8,7 +8,7 @@ export default function Carousel({ images }) {
   const next = () => setCurrent((current + 1) % total);
 
   return (
-    <div className="relative w-full h-80 bg-gray-100 rounded-2xl overflow-hidden flex items-center justify-center">
+    <div className="relative w-full h-[420px] bg-black rounded-2xl overflow-hidden flex items-center justify-center">
       <img
         src={images[current]}
         alt={`Product image ${current + 1}`}
@@ -17,16 +17,18 @@ export default function Carousel({ images }) {
       {/* Prev Button */}
       <button
         onClick={prev}
-        className="absolute left-2 top-1/2 -translate-y-1/2 bg-white bg-opacity-80 rounded-full p-2 shadow hover:bg-opacity-100 transition"
+        className="absolute left-4 top-1/2 -translate-y-1/2 bg-white text-[#002f34] rounded-full p-3 shadow-lg hover:bg-gray-200 transition z-10 text-2xl font-bold border border-gray-300"
         aria-label="Previous image"
+        style={{ opacity: 1 }}
       >
         &#8592;
       </button>
       {/* Next Button */}
       <button
         onClick={next}
-        className="absolute right-2 top-1/2 -translate-y-1/2 bg-white bg-opacity-80 rounded-full p-2 shadow hover:bg-opacity-100 transition"
+        className="absolute right-4 top-1/2 -translate-y-1/2 bg-white text-[#002f34] rounded-full p-3 shadow-lg hover:bg-gray-200 transition z-10 text-2xl font-bold border border-gray-300"
         aria-label="Next image"
+        style={{ opacity: 1 }}
       >
         &#8594;
       </button>

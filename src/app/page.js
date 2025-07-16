@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import Navbar from '@/components/Navbar';
 import SearchBar from '@/components/SearchBar';
 import CategoryCard from '@/components/CategoryCard';
@@ -8,6 +8,7 @@ import AdCard from '@/components/AdCard';
 import Footer from '@/components/Footer';
 import { Car, Home, Laptop, Gamepad2, Shirt, Baby } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import BannerSlider from '@/components/BannerSlider';
 
 // Mock data - you can move this to a separate file later
 const categories = [
@@ -20,64 +21,192 @@ const categories = [
 ];
 
 const recentAds = [
+  // Mobiles
   {
     id: 1,
-    title: 'Honda Civic 2018 for Sale',
-    price: 'Rs 3,200,000',
-    location: 'Lahore, Punjab',
-    image: 'https://images.unsplash.com/photo-1503736334956-4c8f8e92946d?auto=format&fit=crop&w=400&q=80',
-    date: '2 hours ago',
-    featured: true
-  },
-  {
-    id: 2,
     title: 'Samsung Galaxy S21 Ultra',
     price: 'Rs 180,000',
     location: 'Karachi, Sindh',
     image: 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=400&q=80',
     date: '5 hours ago',
-    featured: false
+    featured: false,
+    category: 'Mobiles',
+  },
+  {
+    id: 2,
+    title: 'iPhone 13 Pro Max',
+    price: 'Rs 220,000',
+    location: 'Islamabad, Capital Territory',
+    image: 'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?auto=format&fit=crop&w=400&q=80',
+    date: '1 day ago',
+    featured: true,
+    category: 'Mobiles',
   },
   {
     id: 3,
+    title: 'Xiaomi Redmi Note 12',
+    price: 'Rs 55,000',
+    location: 'Lahore, Punjab',
+    image: 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=400&q=80',
+    date: '3 days ago',
+    featured: false,
+    category: 'Mobiles',
+  },
+  // Cars
+  {
+    id: 4,
+    title: 'Honda Civic 2018 for Sale',
+    price: 'Rs 3,200,000',
+    location: 'Lahore, Punjab',
+    image: 'https://images.unsplash.com/photo-1503736334956-4c8f8e92946d?auto=format&fit=crop&w=400&q=80',
+    date: '2 hours ago',
+    featured: true,
+    category: 'Cars',
+  },
+  {
+    id: 5,
+    title: 'Toyota Corolla 2017',
+    price: 'Rs 2,500,000',
+    location: 'Faisalabad, Punjab',
+    image: 'https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=400&q=80',
+    date: '2 days ago',
+    featured: false,
+    category: 'Cars',
+  },
+  {
+    id: 6,
+    title: 'Suzuki Mehran 2016',
+    price: 'Rs 950,000',
+    location: 'Karachi, Sindh',
+    image: 'https://images.unsplash.com/photo-1464983953574-0892a716854b?auto=format&fit=crop&w=400&q=80',
+    date: '4 days ago',
+    featured: false,
+    category: 'Cars',
+  },
+  // Electronics
+  {
+    id: 7,
     title: 'MacBook Pro 2020',
     price: 'Rs 250,000',
     location: 'Islamabad, Capital Territory',
     image: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=400&q=80',
     date: '1 day ago',
-    featured: true
+    featured: true,
+    category: 'Electronics',
   },
   {
-    id: 4,
-    title: 'Sofa Set - 5 Seater',
-    price: 'Rs 55,000',
-    location: 'Faisalabad, Punjab',
-    image: 'https://images.unsplash.com/photo-1519710164239-da123dc03ef4?auto=format&fit=crop&w=400&q=80',
-    date: '2 days ago',
-    featured: false
-  },
-  {
-    id: 5,
+    id: 8,
     title: 'Gaming PC Full Setup',
     price: 'Rs 120,000',
     location: 'Rawalpindi, Punjab',
     image: 'https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=400&q=80',
     date: '3 days ago',
-    featured: false
+    featured: false,
+    category: 'Electronics',
   },
   {
-    id: 6,
-    title: 'Baby Stroller (Imported)',
-    price: 'Rs 18,000',
+    id: 9,
+    title: 'Sony WH-1000XM4 Headphones',
+    price: 'Rs 45,000',
     location: 'Multan, Punjab',
-    image: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=400&q=80',
-    date: '4 days ago',
-    featured: false
-  }
+    image: 'https://images.unsplash.com/photo-1511367461989-f85a21fda167?auto=format&fit=crop&w=400&q=80',
+    date: '2 days ago',
+    featured: false,
+    category: 'Electronics',
+  },
+];
+
+// Placeholder categories data for dropdown
+const allCategories = [
+  {
+    title: 'Mobiles',
+    items: ['Mobile Phones', 'Accessories', 'Smart Watches', 'Tablets', 'Landline Phones'],
+  },
+  {
+    title: 'Vehicles',
+    items: ['Cars', 'Spare Parts', 'Cars Accessories', 'Car Care', 'Buses, Vans & Trucks', 'Rickshaw & Chingchi', 'Tractors & Trailers', 'Oil & Lubricants'],
+  },
+  {
+    title: 'Bikes',
+    items: ['Motorcycles', 'Bicycles', 'Spare Parts', 'Scooters', 'Bikes Accessories', 'ATV & Quads', 'Bike Care'],
+  },
+  {
+    title: 'Business, Industrial & Agriculture',
+    items: ['Other Business & Industry', 'Food & Restaurants', 'Trade & Industrial Machinery', 'Medical & Pharma', 'Medical for Sale'],
+  },
+  {
+    title: 'Jobs',
+    items: ['Other Jobs', 'Online', 'Part Time', 'Sales', 'Restaurants & Hospitality', 'Marketing', 'Customer Service', 'Domestic Staff', 'Education', 'Medical', 'Graphic Design', 'Delivery Riders', 'Accounting & Finance', 'IT & Networking', 'Clerical & Administration'],
+  },
+  {
+    title: 'Furniture & Home Decor',
+    items: ['Sofa & Chairs', 'Beds & Wardrobes', 'Other Household Items', 'Tables & Dining', 'Office Furniture', 'Home Decoration', 'Garden & Outdoor', 'Painting & Mirrors', 'Rugs & Carpets', 'Curtains & Blinds', 'Bathroom Accessories', 'Lighting', 'Home DIY & Renovations'],
+  },
+  {
+    title: 'Fashion & Beauty',
+    items: ['Clothes', 'Footwear', 'Watches', 'Jewellery', 'Bags', 'Makeup', 'Skin & Hair', 'Accessories'],
+  },
+  {
+    title: 'Electronics & Home Appliances',
+    items: ['Computers & Accessories', 'TV - Video - Audio', 'Cameras & Accessories', 'Games & Entertainment', 'Kitchen Appliances', 'AC & Coolers', 'Fridges & Freezers', 'Washing Machines & Dryers', 'Generators & UPS', 'Other Home Appliances'],
+  },
+  {
+    title: 'Animals',
+    items: ['Livestock', 'Hens & Aseel', 'Cats', 'Dogs', 'Birds', 'Fish & Aquariums', 'Pet Food & Accessories', 'Other Animals'],
+  },
+  {
+    title: 'Books, Sports & Hobbies',
+    items: ['Books & Magazines', 'Musical Instruments', 'Sports Equipment', 'Gym & Fitness', 'Other Hobbies'],
+  },
+  {
+    title: 'Kids',
+    items: ['Kids Furniture', 'Toys', 'Prams & Walkers', 'Swings & Slides', 'Kids Bikes', 'Kids Accessories'],
+  },
+];
+
+function AllCategoriesDropdown({ open, onClose }) {
+  const ref = useRef();
+  useEffect(() => {
+    if (!open) return;
+    function handleClick(e) {
+      if (ref.current && !ref.current.contains(e.target)) onClose();
+    }
+    document.addEventListener('mousedown', handleClick);
+    return () => document.removeEventListener('mousedown', handleClick);
+  }, [open, onClose]);
+  if (!open) return null;
+  return (
+    <div ref={ref} className="absolute left-0 right-0 z-30 mt-2 px-4">
+      <div className="bg-white rounded-xl shadow-lg p-6 flex flex-wrap gap-8 max-h-[420px] overflow-y-auto">
+        {allCategories.map((cat, idx) => (
+          <div key={cat.title} className="min-w-[180px]">
+            <div className="font-bold text-[#002f34] mb-2">{cat.title}</div>
+            <ul className="space-y-1">
+              {cat.items.map((item) => (
+                <li key={item} className="text-[#002f34] hover:underline cursor-pointer text-sm">{item}</li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// Category strip data
+const categoryStrip = [
+  { name: 'Mobile Phones', slug: 'mobiles' },
+  { name: 'Cars', slug: 'cars' },
+  { name: 'Motorcycles', slug: 'motorcycles' },
+  { name: 'Houses', slug: 'houses' },
+  { name: 'Video-Audios', slug: 'video-audios' },
+  { name: 'Tablets', slug: 'tablets' },
+  { name: 'Land & Plots', slug: 'land-plots' },
 ];
 
 export default function HomePage() {
   const router = useRouter();
+  const [allCatOpen, setAllCatOpen] = useState(false);
   const handleCategoryClick = (category) => {
     router.push(`/category/${category.slug}`);
   };
@@ -90,25 +219,42 @@ export default function HomePage() {
     <div className="min-h-screen bg-gray-50">
       <Navbar />
       
-      {/* Hero Section */}
-      <section className="bg-gradient-to-r from-blue-600 to-blue-800 py-16">
+      {/* Categories Horizontal Bar */}
+      <div className="w-full border-b bg-white relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h1 className="text-4xl md:text-6xl font-bold text-white mb-4">
-              Find Everything You Need
-            </h1>
-            <p className="text-xl text-blue-100 mb-8">
-              Buy and sell with confidence in your local community
-            </p>
+          <div className="flex items-center gap-4 overflow-x-auto scrollbar-thin scrollbar-thumb-gray-300 py-3 relative">
+            {/* All Categories Dropdown Trigger */}
+            <div
+              className="flex items-center font-bold text-[#002f34] whitespace-nowrap cursor-pointer relative"
+              onClick={() => setAllCatOpen((v) => !v)}
+            >
+              All Categories
+              <svg className="ml-1" width="16" height="16" fill="none" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" stroke="#002f34" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+              <AllCategoriesDropdown open={allCatOpen} onClose={() => setAllCatOpen(false)} />
+            </div>
+            {/* Category Names */}
+            <div className="flex items-center gap-6">
+              {categoryStrip.map((cat) => (
+                <span
+                  key={cat.slug}
+                  className="text-[#002f34] font-normal cursor-pointer whitespace-nowrap hover:underline"
+                  onClick={() => handleCategoryClick({ slug: cat.slug })}
+                >
+                  {cat.name}
+                </span>
+              ))}
+            </div>
           </div>
-          <SearchBar />
         </div>
-      </section>
+      </div>
+
+      {/* Banner Slider */}
+      <BannerSlider />
 
       {/* Categories Section */}
-      <section className="py-16">
+      <section className="py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold text-gray-800 text-center mb-12">
+          <h2 className="text-3xl font-bold text-gray-800 text-center mb-6">
             Browse Categories
           </h2>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
@@ -123,22 +269,28 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Recently Posted Section */}
-      <section className="py-16 bg-white">
+      {/* Category-wise Ads Section */}
+      <section className="py-12 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-800">Recently Posted</h2>
-            <button className="text-blue-600 hover:text-blue-700 font-medium">
-              View All
-            </button>
+          {/* Mobiles Row */}
+          <h2 className="text-2xl font-bold text-gray-800 mb-4">Mobiles</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
+            {recentAds.filter(ad => ad.category === 'Mobiles').map((ad) => (
+              <AdCard key={ad.id} ad={ad} onAdClick={handleAdClick} />
+            ))}
           </div>
+          {/* Cars Row */}
+          <h2 className="text-2xl font-bold text-gray-800 mb-4">Cars</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
+            {recentAds.filter(ad => ad.category === 'Cars').map((ad) => (
+              <AdCard key={ad.id} ad={ad} onAdClick={handleAdClick} />
+            ))}
+          </div>
+          {/* Electronics Row */}
+          <h2 className="text-2xl font-bold text-gray-800 mb-4">Electronics</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {recentAds.map((ad) => (
-              <AdCard 
-                key={ad.id} 
-                ad={ad} 
-                onAdClick={handleAdClick}
-              />
+            {recentAds.filter(ad => ad.category === 'Electronics').map((ad) => (
+              <AdCard key={ad.id} ad={ad} onAdClick={handleAdClick} />
             ))}
           </div>
         </div>
